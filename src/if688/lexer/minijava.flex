@@ -16,16 +16,15 @@ import if688.lexer.Operator;
 %public
 %class Lexer
 
-underline		= _
+
 letter          = [A-Z|a-z]
 digit           = [0-9]
 integer         = [1-9]{digit}+|{digit}
 float			= [integer].{digit}+
 alphanumeric    = {letter}|{digit}
-identifier      = ({underline}|{letter})({underline}|{alphanumeric})*
+identifier      = ( _|{letter})( _|{alphanumeric})*
 whitespace      = [ \n\t]
 comment 		= "/*" [^*] ~"*/"
-keyword			= [class|public|extends|static|void|int|boolean|while|if|else|return|false|true|this|new]
 %%
 
 
