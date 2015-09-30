@@ -28,5 +28,4 @@ O código do seu analisador léxico deve estar em um repositório acessível online,
 Comentários e whitespace não tem significado algum, exceto para separar os tokens.
 
 --
-Para testar, passar como parâmetro o <arquivo.java> de entrada no main Lexer.java
-Este Lexer imprime os Tokens encontrados.
+Para testar, passar como parametro o <arquivo.java> de entrada no main Lexer.java

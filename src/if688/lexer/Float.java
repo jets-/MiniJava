@@ -3,14 +3,10 @@ package if688.lexer;
 public class Float extends Token {
 	private final double value;
 	
-	public Float(int value) {
+	public Float(double value) {
 		super(Tag.DOUBLE);
 		// TODO Auto-generated constructor stub
 		this.value=value;
-	}
-	public Float(String yytext) {
-		super(Tag.NUM);
-		this.value=Double.parseDouble(yytext);
 	}
 	public double getValue() {
 		return value;

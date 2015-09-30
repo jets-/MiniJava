@@ -6,10 +6,6 @@ public class Int extends Token {
 		super(Tag.NUM);
 		this.value=value;
 	}
-	public Int(String yytext) {
-		super(Tag.NUM);
-		this.value=Integer.parseInt(yytext);
-	}
 	public int getvalue(){
 		return this.value;
 	}

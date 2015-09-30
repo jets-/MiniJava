@@ -16,29 +16,29 @@ import if688.lexer.Operator;
 %public
 %class Lexer
 
-
 letter          = [A-Z|a-z]
 digit           = [0-9]
+/*number	= ({integer}+)("."{digit}*)?*/
 integer         = [1-9]{digit}+|{digit}
-float			= [integer].{digit}+
+float		= {integer}"."{digit}+
 alphanumeric    = {letter}|{digit}
 identifier      = ( _|{letter})( _|{alphanumeric})*
 whitespace      = [ \n\t]
-comment 		= "/*" [^*] ~"*/"
+comment 	= "/*" [^*] ~"*/"
 %%
 
 
 ";"|"."|"="|"("|")"|"{"|"}"|"["|"]" 
-	{ System.out.println("Token Delimiter:"+new Delimiter(yytext().toString())); }
+	{ System.out.println("Token "+new Delimiter(yytext().toString())); }
 "||"| "&&"| "=="| "!="|"<"| "<="|">"| ">="|"+"|"-"|"*"|"/"|"%"| "!" 
-	{ System.out.println("Token Operator:"+new Operator(yytext().toString())); }
+	{ System.out.println("Token "+new Operator(yytext().toString())); }
 "class"| "public"| "extends"| "static"| "void"| "int"| "boolean"| 
 "while"| "if"| "else"| "return"| "false"| "true"| "this"| "new" 
-	{ System.out.println("Token KeyWord:"+new Keyword(yytext().toString())); }
-{identifier}    { System.out.println("Token ID:"+new Identifier(yytext().toString())); }
-{integer}       { System.out.println("Token Int:"+new Int(yytext()).toString()); }
-{float}			{ System.out.println("Token Double:"+new Float(yytext()).toString()); }
+	{ System.out.println("Token "+new Keyword(yytext().toString())); }
+{identifier}    { System.out.println("Token "+new Identifier(yytext().toString())); }
+{integer}       { System.out.println("Token "+new Int(Integer.parseInt(yytext())).toString()); }
+{float}		{ System.out.println("Token "+new Float(Double.parseDouble(yytext())).toString()); }
 {whitespace}    { /* Ignorar whitespace. */ }
-{comment}		{}
-"//"              { System.out.println("Illegal Token: '" + yytext() +
+{comment}	{ /* Ignorar Comment */ }
+"//"            { System.out.println("Illegal Token '" + yytext() +
                     "' line: " + yyline + ", column: " + yycolumn); }
