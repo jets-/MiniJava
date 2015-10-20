@@ -1,0 +1,67 @@
+
+package if688;
+
+import java_cup.runtime.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+
+parser code {:
+  protected Lexer lexer;
+:}
+
+init with {:
+  ComplexSymbolFactory f = new ComplexSymbolFactory();
+  symbolFactory = f;
+  File file = new File("input.txt");
+  FileInputStream fis = null;
+  try {
+    fis = new FileInputStream(file);
+  } catch (IOException e) {
+    e.printStackTrace();
+  } 
+  lexer = new Lexer(f,fis);
+:};
+
+scan with {: return lexer.next_token(); :};
+
+terminal           	PLUS, MINUS, TIMES, DIVIDE, SEMI, LPAREN, RPAREN, BEGIN, END, LBRA, RBRA,
+				  	ASSIGN, DOT, COMMA, MOD, LEQ, GTD, EQ, NEQ, LE, GT, AND, OR, NOT,
+				   	CLASS, PUBLIC, EXTENDS, STATIC, VOID, INT, BOOLEAN, WHILE, IF, ELSE, 
+				   	RETURN, THIS, NEW, MAIN, STRING, ID, PRINT, LEN;				
+terminal Integer   	NUMBER;
+terminal Double 	DOUBLE;
+terminal boolean 	BOOLCONST;
+
+non terminal 		Goal, MainClass, ClassDeclaration, VarDeclaration, MethodDeclaration, 
+					Type, Statement, Expression;
+				
+				
+				
+				
+Goal				::=	MainClass ( ClassDeclaration )*; /*<EOF>*/
+MainClass			::=	CLASS ID BEGIN PUBLIC STATIC VOID MAIN LPAREN STRING LBRA RBRA ID RPAREN BEGIN Statement END END;
+ClassDeclaration	::=	CLASS ID ( EXTENDS ID )? BEGIN ( VarDeclaration )* ( MethodDeclaration )* END;
+VarDeclaration		::=	Type ID END;
+MethodDeclaration	::=	PUBLIC Type ID LPAREN ( Type ID ( COMMA Type ID )* )? RPAREN BEGIN ( VarDeclaration )* ( Statement )* RETURN Expression SEMI END;
+Type				::=	INT LBRA RBRA |	BOOLEAN | INT |	ID;
+Statement			::=	BEGIN ( Statement )* END;
+					|	IF LPAREN Expression RPAREN Statement ELSE Statement;
+					|	WHILE LPAREN Expression RPAREN Statement;
+					|	PRINT LPAREN Expression RPAREN SEMI;
+					|	ID ASSIGN Expression SEMI;
+					|	ID LBRA Expression RBRA ASSIGN Expression SEMI;
+Expression			::=	Expression ( AND | LE | PLUS | MINUS | TIMES ) Expression
+					|	Expression LBRA Expression RBRA
+					|	Expression DOT LEN
+					|	Expression DOT ID LPAREN ( Expression ( COMMA Expression )* )? RPAREN
+					|	NUMBER | DOUBLE
+					|	BOOLCONST
+					|	ID
+					|	THIS
+					|	NEW INT LBRA Expression RBRA
+					|	NEW ID LPAREN RPAREN
+					|	NOT Expression
+					|	LPAREN Expression RPAREN;
+
+
