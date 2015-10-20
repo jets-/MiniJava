@@ -1,28 +1,15 @@
-//nome do pacote a ser gerado
+
 package if688;
 
-//imports de classes utilizadas nos codigos abaixo
 import java_cup.runtime.*;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 
-//class NomeDaClasse //(pode nomear como desejar a classe)
-
-//aqui se coloca código associado com as ações semânticas da gramática
-//por exemplo, manipulação da tabela de símbolos
-//action code {: :}
-
-//permite a declaração de métodos e variáveis que estarão na classe gerada
-//pode fazer override de métodos de tratamento de erros
 parser code {:
   protected Lexer lexer;
 :}
 
-/* codigo que vai ser executado antes do parser solicitar primeiro token
-   geralmente utilizado para inicializar o scanner, e as tabelas e estruturas de dados utilizadas pelas ações semânticas
-   o código aqui vai ser o corpo de um método void da classe gerada
- */
 init with {:
   ComplexSymbolFactory f = new ComplexSymbolFactory();
   symbolFactory = f;
@@ -36,98 +23,45 @@ init with {:
   lexer = new Lexer(f,fis);
 :};
 
-//indica como o parser solicita o próximo token do scanner
 scan with {: return lexer.next_token(); :};
 
-/* Terminais (tokens gerados pelo lexer). */
-//cada nome deste vai ser associado com uma constante em sym.java
-terminal           PLUS, MINUS, TIMES, DIVIDE, SEMI, LPAREN, RPAREN, BEGIN, END, LBRA, RBRA,
-					ASSIGN, DOT, COMMA, MOD, LEQ, GTD, EQ, NEQ, LE, GT, AND, OR, NOT,
-					CLASS, PUBLIC, EXTENDS, STATIC, VOID, INT, BOOLEAN, WHILE, IF, ELSE, 
-					RETURN, THIS, NEW, MAIN, STRING, ID, PRINT, LEN;
-//terminais podem ter valores associados
-terminal Integer   NUMBER;
-terminal Double DOUBLE;
-terminal boolean BOOLCONST;
+terminal           	PLUS, MINUS, TIMES, DIVIDE, SEMI, LPAREN, RPAREN, BEGIN, END, LBRA, RBRA,
+				  	ASSIGN, DOT, COMMA, MOD, LEQ, GTD, EQ, NEQ, LE, GT, AND, OR, NOT,
+				   	CLASS, PUBLIC, EXTENDS, STATIC, VOID, INT, BOOLEAN, WHILE, IF, ELSE, 
+				   	RETURN, THIS, NEW, MAIN, STRING, ID, PRINT, LEN;				
+terminal Integer   	NUMBER;
+terminal Double 	DOUBLE;
+terminal boolean 	BOOLCONST;
 
-//terminais sem uma classe associada nao armazenam valor
-
-//os nomes de terminais nao podem ser um de "code", "action", "parser", "terminal", "non", "nonterminal", "init", "scan", "with", "start", "precedence", "left", "right", "nonassoc", "import", "package".
-
-//CUP consegue lidar com gramaticas ambiguas, por meio das regras de precedência
-/*
-	precedence left     terminal[, terminal...];
-	precedence right    terminal[, terminal...];
-	precedence nonassoc terminal[, terminal...];
-	//quanto mais 'pra baixo' maior a ordem de precedência
-	//exemplo 3+4|*8
-
-
-	//expr --> expr + num | expr * num
-	//associatividade ajuda na resolução de conflitos shift-reduce
-	precedence left  ADD, SUBTRACT;
-	precedence left  TIMES, DIVIDE;
-*/
-
-	
-
-/* Nao-terminais *//*
-non terminal Integer    expr, term, rest, resto, factor;*/
-non terminal Goal, MainClass, ClassDeclaration, VarDeclaration, MethodDeclaration, 
-				Type, Statement, Expression;
-
-/* Gramatica para o parser.
-   
-   expr      ::=   term rest
-   rest      ::=   PLUS term rest |
-                   MINUS term rest |
-                   EPSILON
-   term      ::=   factor resto
-   resto     ::=   TIMES factor resto |
-                   DIVIDE factor resto |
-                   EPSILON
-   factor    ::=   NUMBER
-*/
-
-//se a primeira regra nao for o simbolo inicial, podemos declarar o simbolo inicial como abaixo
-//    start with non-terminal;
-
-	//expr --> term rest
-Goal	::=	MainClass ( ClassDeclaration )*; /*<EOF>*/
-MainClass	::=	CLASS ID BEGIN PUBLIC STATIC VOID MAIN LPAREN STRING LBRA RBRA ID RPAREN BEGIN Statement END END;
+non terminal 		Goal, MainClass, ClassDeclaration, VarDeclaration, MethodDeclaration, 
+					Type, Statement, Expression;
+				
+				
+				
+				
+Goal				::=	MainClass ( ClassDeclaration )*; /*<EOF>*/
+MainClass			::=	CLASS ID BEGIN PUBLIC STATIC VOID MAIN LPAREN STRING LBRA RBRA ID RPAREN BEGIN Statement END END;
 ClassDeclaration	::=	CLASS ID ( EXTENDS ID )? BEGIN ( VarDeclaration )* ( MethodDeclaration )* END;
-VarDeclaration	::=	Type ID END;
+VarDeclaration		::=	Type ID END;
 MethodDeclaration	::=	PUBLIC Type ID LPAREN ( Type ID ( COMMA Type ID )* )? RPAREN BEGIN ( VarDeclaration )* ( Statement )* RETURN Expression SEMI END;
-Type	::=	INT LBRA RBRA |	BOOLEAN | INT |	ID;
-Statement	::=	BEGIN ( Statement )* END;
-|	IF LPAREN Expression RPAREN Statement ELSE Statement;
-|	WHILE LPAREN Expression RPAREN Statement;
-|	PRINT LPAREN Expression RPAREN SEMI;
-|	ID ASSIGN Expression SEMI;
-|	ID LBRA Expression RBRA ASSIGN Expression SEMI;
-Expression	::=	Expression ( AND | LE | PLUS | MINUS | TIMES ) Expression
-|	Expression LBRA Expression RBRA
-|	Expression DOT LEN
-|	Expression DOT ID LPAREN ( Expression ( COMMA Expression )* )? RPAREN
-|	NUMBER | DOUBLE
-|	BOOLCONST
-|	ID
-|	THIS
-|	NEW INT LBRA Expression RBRA
-|	NEW ID LPAREN RPAREN
-|	NOT Expression
-|	LPAREN Expression RPAREN;
-/*   expr      ::=   term rest;
-	//rest --> + term { print('+');} rest
-   rest      ::=   PLUS term {: System.out.print(" + "); :} rest |
-                   MINUS term {: System.out.print(" - "); :} rest |
-                   ;
-   term      ::=   factor resto;
-   resto     ::=   TIMES factor {: System.out.print(" * "); :} resto |
-                   DIVIDE factor {: System.out.print(" / "); :} resto |
-                   ;
-   // factor --> 0 {print('0');}
-   // ...
-   // factor --> 9 {print('9');}
-   factor    ::=   NUMBER:n {: System.out.print(" " + n  +" "); :};*/
-   
+Type				::=	INT LBRA RBRA |	BOOLEAN | INT |	ID;
+Statement			::=	BEGIN ( Statement )* END;
+					|	IF LPAREN Expression RPAREN Statement ELSE Statement;
+					|	WHILE LPAREN Expression RPAREN Statement;
+					|	PRINT LPAREN Expression RPAREN SEMI;
+					|	ID ASSIGN Expression SEMI;
+					|	ID LBRA Expression RBRA ASSIGN Expression SEMI;
+Expression			::=	Expression ( AND | LE | PLUS | MINUS | TIMES ) Expression
+					|	Expression LBRA Expression RBRA
+					|	Expression DOT LEN
+					|	Expression DOT ID LPAREN ( Expression ( COMMA Expression )* )? RPAREN
+					|	NUMBER | DOUBLE
+					|	BOOLCONST
+					|	ID
+					|	THIS
+					|	NEW INT LBRA Expression RBRA
+					|	NEW ID LPAREN RPAREN
+					|	NOT Expression
+					|	LPAREN Expression RPAREN;
+					
+					
